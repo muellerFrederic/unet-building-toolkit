@@ -1,6 +1,6 @@
 import tensorflow as tf
 import abc
-import convolution_mixins
+import mixins
 
 
 class Block(abc.ABC):
@@ -9,7 +9,7 @@ class Block(abc.ABC):
         pass
 
 
-class Residual2D(Block, convolution_mixins.Mixin2D):
+class Residual2D(Block, mixins.ConvMixin2D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         repeats = filters // input_data.shape[-1]
         output = self.apply_convolutions(input_data, convolutions, filters, batch_normalization)
@@ -18,7 +18,7 @@ class Residual2D(Block, convolution_mixins.Mixin2D):
         return output
 
 
-class Residual3D(Block, convolution_mixins.Mixin3D):
+class Residual3D(Block, mixins.ConvMixin3D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         repeats = filters // input_data.shape[-1]
         output = self.apply_convolutions(input_data, convolutions, filters, batch_normalization)
@@ -27,31 +27,31 @@ class Residual3D(Block, convolution_mixins.Mixin3D):
         return output
 
 
-class Standard2D(Block, convolution_mixins.Mixin2D):
+class Standard2D(Block, mixins.ConvMixin2D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         return self.apply_convolutions(input_data, convolutions, filters, batch_normalization)
 
 
-class Standard3D(Block, convolution_mixins.Mixin3D):
+class Standard3D(Block, mixins.ConvMixin3D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         return self.apply_convolutions(input_data, convolutions, filters, batch_normalization)
 
 
-class StandardSkip2D(Block, convolution_mixins.Mixin2D):
+class StandardSkip2D(Block, mixins.ConvMixin2D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, batch_normalization)
         return output
 
 
-class StandardSkip3D(Block, convolution_mixins.Mixin3D):
+class StandardSkip3D(Block, mixins.ConvMixin3D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, batch_normalization)
         return output
 
 
-class ResidualSkip2D(Block, convolution_mixins.Mixin2D):
+class ResidualSkip2D(Block, mixins.ConvMixin2D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         repeats = filters // input_data[1].shape[-1]
         output = tf.keras.layers.Concatenate()(input_data)
@@ -61,7 +61,7 @@ class ResidualSkip2D(Block, convolution_mixins.Mixin2D):
         return output
 
 
-class ResidualSkip3D(Block, convolution_mixins.Mixin3D):
+class ResidualSkip3D(Block, mixins.ConvMixin3D):
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         repeats = filters // input_data[1].shape[-1]
         output = tf.keras.layers.Concatenate()(input_data)
