@@ -1,3 +1,7 @@
+"""
+This module contains wrapper-classes for applying standard up- or downsampling operations to given input data.
+This is needed to adjust the interfaces of the underlying classes an make them interchangeable.
+"""
 import tensorflow as tf
 import abc
 

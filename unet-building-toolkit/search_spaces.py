@@ -1,3 +1,7 @@
+"""
+This module contains kerastuner search spaces for u-net-architectures suited for binary and multiclass segmentation on
+2- and 3-dimensional input data.
+"""
 import math
 import kerastuner as kt
 import creators

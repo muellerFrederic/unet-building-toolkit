@@ -1,16 +1,70 @@
+"""
+This module contains building blocks of u-net-like architectures representing different methods of feature detection.
+Since the interface is given as abstract class, all the blocks are interchangeable.
+"""
 import tensorflow as tf
 import abc
 import mixins
 
 
 class Block(abc.ABC):
+    """Interface for blocks representing different methods of feature detection"""
     @abc.abstractmethod
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         pass
 
 
-class Residual2D(Block, mixins.ConvMixin2D):
+class Standard2D(Block, mixins.ConvMixin2D):
+    """
+    Encapsulates a method for applying a standard block of convolution and batch normalization operations to
+    2-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a standard block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
+        return self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
+
+
+class Standard3D(Block, mixins.ConvMixin3D):
+    """
+    Encapsulates a method for applying a standard block of convolution and batch normalization operations to
+    3-dimensional input data
+    """
+    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a standard block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
+        return self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
+
+
+class Residual2D(Block, mixins.ConvMixin2D):
+    """
+    Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
+    2-dimensional input data
+    """
+    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a residual block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters. At the end the input data is added to the output of the block.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         repeats = filters // input_data.shape[-1]
         output = self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
         input_data = tf.tile(input_data, tf.constant([1, 1, 1, repeats]))
@@ -19,7 +73,20 @@ class Residual2D(Block, mixins.ConvMixin2D):
 
 
 class Residual3D(Block, mixins.ConvMixin3D):
+    """
+    Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
+    3-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a residual block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters. At the end the input data is added to the output of the block.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         repeats = filters // input_data.shape[-1]
         output = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
         input_data = tf.tile(input_data, tf.constant([1, 1, 1, 1, repeats]))
@@ -27,18 +94,23 @@ class Residual3D(Block, mixins.ConvMixin3D):
         return output
 
 
-class Standard2D(Block, mixins.ConvMixin2D):
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
-        return self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
-
-
-class Standard3D(Block, mixins.ConvMixin3D):
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
-        return self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
-
-
 class Dense2D(Block, mixins.ConvMixin2D):
+    """
+    Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
+    2-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
+        Each standard block gets the concatenated outputs of all standard blocks before as input.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
+        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        """
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
         else:
@@ -52,7 +124,22 @@ class Dense2D(Block, mixins.ConvMixin2D):
 
 
 class Dense3D(Block, mixins.ConvMixin3D):
+    """
+    Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
+    3-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
+        Each standard block gets the concatenated outputs of all standard blocks before as input.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
+        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        """
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
         else:
@@ -66,7 +153,21 @@ class Dense3D(Block, mixins.ConvMixin3D):
 
 
 class Inception2D(Block, mixins.ConvMixin2D):
+    """
+    Encapsulates a method for applying an inception block to 2-dimensional input data.
+    an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates an inception block. Inside the inception block,  1x1,  3x3,  5x5 and a pooling/scaling operations are
+        applied to the input data in parallel. Features of different sizes can therefore be detected at the same level
+        of the network.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
         five_by_five = self.apply_convolutions(input_data, convolutions, filters, (5, 5), batch_normalization)
@@ -77,7 +178,21 @@ class Inception2D(Block, mixins.ConvMixin2D):
 
 
 class Inception3D(Block, mixins.ConvMixin3D):
+    """
+    Encapsulates a method for applying an inception block to 3-dimensional input data.
+    an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
+        are applied to the input data in parallel. Features of different sizes can therefore be detected at the same
+        level of the network.
+        :param input_data: keras tensor that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
         five_by_five = self.apply_convolutions(input_data, convolutions, filters, (5, 5, 5), batch_normalization)
@@ -88,21 +203,61 @@ class Inception3D(Block, mixins.ConvMixin3D):
 
 
 class StandardSkip2D(Block, mixins.ConvMixin2D):
+    """
+    Skip-connection version of the Standard2D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a standard block of convolution and batch normalization operations to 2-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a standard block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, (3, 3), batch_normalization)
         return output
 
 
 class StandardSkip3D(Block, mixins.ConvMixin3D):
+    """
+    Skip-connection version of the Standard3D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a standard block of convolution and batch normalization operations to 3-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a standard block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, (3, 3, 3), batch_normalization)
         return output
 
 
 class ResidualSkip2D(Block, mixins.ConvMixin2D):
+    """
+    Skip-connection version of the Residual2D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a residual block of convolution, batch normalization and add operations to
+    2-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a residual block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters. At the end the input data is added to the output of the block.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         repeats = filters // input_data[1].shape[-1]
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, (3, 3), batch_normalization)
@@ -112,7 +267,21 @@ class ResidualSkip2D(Block, mixins.ConvMixin2D):
 
 
 class ResidualSkip3D(Block, mixins.ConvMixin3D):
+    """
+    Skip-connection version of the Residual3D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a residual block of convolution, batch normalization and add operations to
+    3-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a residual block containing a certain amount of convolution operations and optionally
+        batch normalization by calling the apply_convolutions method of the convolution mixin class with the
+        given parameters. At the end the input data is added to the output of the block.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         repeats = filters // input_data[1].shape[-1]
         output = tf.keras.layers.Concatenate()(input_data)
         output = self.apply_convolutions(output, convolutions, filters, (3, 3, 3), batch_normalization)
@@ -122,7 +291,22 @@ class ResidualSkip3D(Block, mixins.ConvMixin3D):
 
 
 class DenseSkip2D(Block, mixins.ConvMixin2D):
+    """
+    Skip-connection version of the Dense2D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a dense block of convolution, batch normalization and concatenation operations to 2-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
+        Each standard block gets the concatenated outputs of all standard blocks before as input.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
+        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        """
         input_data = tf.keras.layers.Concatenate()(input_data)
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
@@ -137,7 +321,22 @@ class DenseSkip2D(Block, mixins.ConvMixin2D):
 
 
 class DenseSkip3D(Block, mixins.ConvMixin3D):
+    """
+    Skip-connection version of the Dense3D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applies a dense block of convolution, batch normalization and concatenation operations to 3-dimensional input data
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
+        Each standard block gets the concatenated outputs of all standard blocks before as input.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
+        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        """
         input_data = tf.keras.layers.Concatenate()(input_data)
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
@@ -152,7 +351,22 @@ class DenseSkip3D(Block, mixins.ConvMixin3D):
 
 
 class InceptionSkip2D(Block, mixins.ConvMixin2D):
+    """
+    Skip-connection version of the Inception2D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applying an inception block to 2-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
+    a pooling/scaling operation in parallel to the given input data.
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
+        are applied to the input data in parallel. Features of different sizes can therefore be detected at the same
+        level of the network.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         input_data = tf.keras.layers.Concatenate()(input_data)
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
@@ -164,7 +378,22 @@ class InceptionSkip2D(Block, mixins.ConvMixin2D):
 
 
 class InceptionSkip3D(Block, mixins.ConvMixin3D):
+    """
+    Skip-connection version of the Inception3D-block. Multiple inputs can be passed as list and will be concatenated.
+    Applying an inception block to 3-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
+    a pooling/scaling operation in parallel to the given input data.
+    """
     def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+        """
+        Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
+        are applied to the input data in parallel. Features of different sizes can therefore be detected at the same
+        level of the network.
+        :param input_data: list of keras tensors that should be transformed
+        :param convolutions: the amount of convolution operations that should be applied to the input data in each
+        contained standard block
+        :param filters: the amount of feature maps that should be created by each convolution
+        :param batch_normalization: wether to use batch_normalization after each convolution operation or not
+        """
         input_data = tf.keras.layers.Concatenate()(input_data)
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
