@@ -1,6 +1,7 @@
 """
 This module contains loss functions that can be used to train a given model
 """
+
 import tensorflow as tf
 
 
