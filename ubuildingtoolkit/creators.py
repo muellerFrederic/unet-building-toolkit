@@ -17,9 +17,9 @@ This module contains classes which encapsulate methods for creating different u-
 """
 
 import abc
-import blocks
+import feature_recognition_blocks
 import tensorflow as tf
-import wrappers
+import sub_sampling_blocks
 import mixins
 
 
@@ -111,7 +111,7 @@ class ModelCreator(abc.ABC):
         return tf.keras.Model(inputs=network_input, outputs=network_structure[-1])
 
 
-class Unet(ModelCreator, mixins.AttentMixin2D):
+class Unet2D(ModelCreator, mixins.AttentMixin2D):
     """
     This class implements the _create_network_core method in a way, that it returns a standard u-net suited for
     2-dimensional input data.
@@ -132,11 +132,11 @@ class Unet(ModelCreator, mixins.AttentMixin2D):
 
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
@@ -144,9 +144,9 @@ class Unet(ModelCreator, mixins.AttentMixin2D):
                 lower_stage = input_data[count - 1]
                 if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
                     skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
-                upsampled = upsampling.apply_operation(filters=num_filters)(lower_stage)
-                input_data[count] = block_expanding.create([skip_connection, upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(lower_stage, filters=num_filters)
+                input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution2D(filters=output_feature_maps, kernel_size=(1, 1),
@@ -178,17 +178,17 @@ class Unet3D(ModelCreator):
 
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
-                upsampled = upsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_expanding.create([input_data[index_concatenate], upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_expanding.apply([input_data[index_concatenate], upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
@@ -220,17 +220,17 @@ class Vnet2D(ModelCreator):
 
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
-                upsampled = upsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_expanding.create([input_data[index_concatenate], upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_expanding.apply([input_data[index_concatenate], upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution2D(filters=output_feature_maps, kernel_size=(1, 1),
@@ -262,17 +262,17 @@ class Vnet3D(ModelCreator):
 
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
-                upsampled = upsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_expanding.create([input_data[index_concatenate], upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_expanding.apply([input_data[index_concatenate], upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
@@ -293,11 +293,11 @@ class GeneralUnet2D(ModelCreator, mixins.AttentMixin2D):
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
@@ -305,9 +305,9 @@ class GeneralUnet2D(ModelCreator, mixins.AttentMixin2D):
                 lower_stage = input_data[count - 1]
                 if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
                     skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
-                upsampled = upsampling.apply_operation(filters=num_filters)(lower_stage)
-                input_data[count] = block_expanding.create([skip_connection, upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(lower_stage, filters=num_filters)
+                input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution2D(filters=output_feature_maps, kernel_size=(1, 1),
@@ -328,11 +328,11 @@ class GeneralUnet3D(ModelCreator, mixins.AttentMixin3D):
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         for count, num_filters in enumerate(filters):
             if count == 0:
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             elif 0 < count < depth:
-                input_data[count] = downsampling.apply_operation(filters=num_filters)(input_data[count - 1])
-                input_data[count] = block_contracting.create(input_data[count], num_convolutions, num_filters, **kwargs)
+                input_data[count] = downsampling.apply(input_data[count - 1], filters=num_filters)
+                input_data[count] = block_contracting.apply(input_data[count], num_convolutions, num_filters, **kwargs)
 
             else:
                 index_concatenate = 2 * depth - count - 2
@@ -340,9 +340,9 @@ class GeneralUnet3D(ModelCreator, mixins.AttentMixin3D):
                 lower_stage = input_data[count - 1]
                 if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
                     skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
-                upsampled = upsampling.apply_operation(filters=num_filters)(lower_stage)
-                input_data[count] = block_expanding.create([skip_connection, upsampled], num_convolutions,
-                                                           num_filters, **kwargs)
+                upsampled = upsampling.apply(lower_stage, filters=num_filters)
+                input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,
+                                                          num_filters, **kwargs)
 
         if output_feature_maps == 1:
             input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1, 1),

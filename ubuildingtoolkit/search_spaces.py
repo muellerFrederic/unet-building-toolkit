@@ -21,36 +21,37 @@ import math
 import kerastuner as kt
 import creators
 import losses
-import blocks
-import wrappers
+import feature_recognition_blocks
+import sub_sampling_blocks
 import tensorflow as tf
 import metrics
 
 
 class SearchSpace2DBinary(kt.HyperModel):
     downsampling = {
-        "max_pooling": wrappers.MaxPoolingWrapper2D(),
-        "average_pooling": wrappers.AveragePoolingWrapper2D(),
-        "down_convolution": wrappers.DownConvolutionWrapper2D(),
+        "max_pooling": sub_sampling_blocks.MaxPoolingWrapper2D(),
+        "average_pooling": sub_sampling_blocks.AveragePoolingWrapper2D(),
+        "down_convolution": sub_sampling_blocks.DownConvolutionWrapper2D(),
+        "hybrid": sub_sampling_blocks.HybridPoolingWrapper2D()
     }
 
     upsampling = {
-        "transposed_convolution": wrappers.TransposedConvolutionWrapper2D(),
-        "up_sampling": wrappers.UpSamplingWrapper2D()
+        "transposed_convolution": sub_sampling_blocks.TransposedConvolutionWrapper2D(),
+        "up_sampling": sub_sampling_blocks.UpSamplingWrapper2D()
     }
 
     blocks_contracting_path = {
-        "standard": blocks.Standard2D(),
-        "residual": blocks.Residual2D(),
-        "dense": blocks.Dense2D(),
-        "inception": blocks.Inception2D()
+        "standard": feature_recognition_blocks.Standard2D(),
+        "residual": feature_recognition_blocks.Residual2D(),
+        "dense": feature_recognition_blocks.Dense2D(),
+        "inception": feature_recognition_blocks.Inception2D()
     }
 
     blocks_expanding_path = {
-        "standard": blocks.StandardSkip2D(),
-        "residual": blocks.ResidualSkip2D(),
-        "dense": blocks.DenseSkip2D(),
-        "inception": blocks.InceptionSkip2D()
+        "standard": feature_recognition_blocks.StandardSkip2D(),
+        "residual": feature_recognition_blocks.ResidualSkip2D(),
+        "dense": feature_recognition_blocks.DenseSkip2D(),
+        "inception": feature_recognition_blocks.InceptionSkip2D()
     }
 
     def __init__(self, input_shape, filter_base, pre_processing=None, post_processing=None):
@@ -72,7 +73,7 @@ class SearchSpace2DBinary(kt.HyperModel):
         depth = hp.Int(name='depth', min_value=2, max_value=self.max_depth)
         num_convolutions = hp.Int(name='num_convolutions', min_value=1, max_value=3)
         downsampling = self.downsampling[
-            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution"])
+            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution", "hybrid"])
         ]
         upsampling = self.upsampling[
             hp.Choice(name='upsampling', values=["transposed_convolution", "up_sampling"])
@@ -107,28 +108,29 @@ class SearchSpace2DBinary(kt.HyperModel):
 
 class SearchSpace3DBinary(kt.HyperModel):
     downsampling = {
-        "max_pooling": wrappers.MaxPoolingWrapper3D(),
-        "average_pooling": wrappers.AveragePoolingWrapper3D(),
-        "down_convolution": wrappers.DownConvolutionWrapper3D(),
+        "max_pooling": sub_sampling_blocks.MaxPoolingWrapper3D(),
+        "average_pooling": sub_sampling_blocks.AveragePoolingWrapper3D(),
+        "down_convolution": sub_sampling_blocks.DownConvolutionWrapper3D(),
+        "hybrid": sub_sampling_blocks.HybridPoolingWrapper3D()
     }
 
     upsampling = {
-        "transposed_convolution": wrappers.TransposedConvolutionWrapper3D(),
-        "up_sampling": wrappers.UpSamplingWrapper3D()
+        "transposed_convolution": sub_sampling_blocks.TransposedConvolutionWrapper3D(),
+        "up_sampling": sub_sampling_blocks.UpSamplingWrapper3D()
     }
 
     blocks_contracting_path = {
-        "standard": blocks.Standard3D(),
-        "residual": blocks.Residual3D(),
-        "dense": blocks.Dense3D(),
-        "inception": blocks.Inception3D()
+        "standard": feature_recognition_blocks.Standard3D(),
+        "residual": feature_recognition_blocks.Residual3D(),
+        "dense": feature_recognition_blocks.Dense3D(),
+        "inception": feature_recognition_blocks.Inception3D()
     }
 
     blocks_expanding_path = {
-        "standard": blocks.StandardSkip3D(),
-        "residual": blocks.ResidualSkip3D(),
-        "dense": blocks.DenseSkip3D(),
-        "inception": blocks.InceptionSkip3D()
+        "standard": feature_recognition_blocks.StandardSkip3D(),
+        "residual": feature_recognition_blocks.ResidualSkip3D(),
+        "dense": feature_recognition_blocks.DenseSkip3D(),
+        "inception": feature_recognition_blocks.InceptionSkip3D()
     }
 
     def __init__(self, input_shape, filter_base, pre_processing=None, post_processing=None):
@@ -150,7 +152,7 @@ class SearchSpace3DBinary(kt.HyperModel):
         depth = hp.Int(name='depth', min_value=2, max_value=self.max_depth)
         num_convolutions = hp.Int(name='num_convolutions', min_value=1, max_value=3)
         downsampling = self.downsampling[
-            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution"])
+            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution", "hybrid"])
         ]
         upsampling = self.upsampling[
             hp.Choice(name='upsampling', values=["transposed_convolution", "up_sampling"])
@@ -185,28 +187,29 @@ class SearchSpace3DBinary(kt.HyperModel):
 
 class SearchSpace2DMulticlass(kt.HyperModel):
     downsampling = {
-        "max_pooling": wrappers.MaxPoolingWrapper2D(),
-        "average_pooling": wrappers.AveragePoolingWrapper2D(),
-        "down_convolution": wrappers.DownConvolutionWrapper2D(),
+        "max_pooling": sub_sampling_blocks.MaxPoolingWrapper2D(),
+        "average_pooling": sub_sampling_blocks.AveragePoolingWrapper2D(),
+        "down_convolution": sub_sampling_blocks.DownConvolutionWrapper2D(),
+        "hybrid": sub_sampling_blocks.HybridPoolingWrapper2D()
     }
 
     upsampling = {
-        "transposed_convolution": wrappers.TransposedConvolutionWrapper2D(),
-        "up_sampling": wrappers.UpSamplingWrapper2D()
+        "transposed_convolution": sub_sampling_blocks.TransposedConvolutionWrapper2D(),
+        "up_sampling": sub_sampling_blocks.UpSamplingWrapper2D()
     }
 
     blocks_contracting_path = {
-        "standard": blocks.Standard2D(),
-        "residual": blocks.Residual2D(),
-        "dense": blocks.Dense2D(),
-        "inception": blocks.Inception2D()
+        "standard": feature_recognition_blocks.Standard2D(),
+        "residual": feature_recognition_blocks.Residual2D(),
+        "dense": feature_recognition_blocks.Dense2D(),
+        "inception": feature_recognition_blocks.Inception2D()
     }
 
     blocks_expanding_path = {
-        "standard": blocks.StandardSkip2D(),
-        "residual": blocks.ResidualSkip2D(),
-        "dense": blocks.DenseSkip2D(),
-        "inception": blocks.InceptionSkip2D()
+        "standard": feature_recognition_blocks.StandardSkip2D(),
+        "residual": feature_recognition_blocks.ResidualSkip2D(),
+        "dense": feature_recognition_blocks.DenseSkip2D(),
+        "inception": feature_recognition_blocks.InceptionSkip2D()
     }
 
     def __init__(self, input_shape, filter_base, num_classes, pre_processing=None, post_processing=None):
@@ -228,7 +231,7 @@ class SearchSpace2DMulticlass(kt.HyperModel):
         depth = hp.Int(name='depth', min_value=2, max_value=self.max_depth)
         num_convolutions = hp.Int(name='num_convolutions', min_value=1, max_value=3)
         downsampling = self.downsampling[
-            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution"])
+            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution", "hybrid"])
         ]
         upsampling = self.upsampling[
             hp.Choice(name='upsampling', values=["transposed_convolution", "up_sampling"])
@@ -263,28 +266,29 @@ class SearchSpace2DMulticlass(kt.HyperModel):
 
 class SearchSpace3DMulticlass(kt.HyperModel):
     downsampling = {
-        "max_pooling": wrappers.MaxPoolingWrapper3D(),
-        "average_pooling": wrappers.AveragePoolingWrapper3D(),
-        "down_convolution": wrappers.DownConvolutionWrapper3D(),
+        "max_pooling": sub_sampling_blocks.MaxPoolingWrapper3D(),
+        "average_pooling": sub_sampling_blocks.AveragePoolingWrapper3D(),
+        "down_convolution": sub_sampling_blocks.DownConvolutionWrapper3D(),
+        "hybrid": sub_sampling_blocks.HybridPoolingWrapper3D()
     }
 
     upsampling = {
-        "transposed_convolution": wrappers.TransposedConvolutionWrapper3D(),
-        "up_sampling": wrappers.UpSamplingWrapper3D()
+        "transposed_convolution": sub_sampling_blocks.TransposedConvolutionWrapper3D(),
+        "up_sampling": sub_sampling_blocks.UpSamplingWrapper3D()
     }
 
     blocks_contracting_path = {
-        "standard": blocks.Standard3D(),
-        "residual": blocks.Residual3D(),
-        "dense": blocks.Dense3D(),
-        "inception": blocks.Inception3D()
+        "standard": feature_recognition_blocks.Standard3D(),
+        "residual": feature_recognition_blocks.Residual3D(),
+        "dense": feature_recognition_blocks.Dense3D(),
+        "inception": feature_recognition_blocks.Inception3D()
     }
 
     blocks_expanding_path = {
-        "standard": blocks.StandardSkip3D(),
-        "residual": blocks.ResidualSkip3D(),
-        "dense": blocks.DenseSkip3D(),
-        "inception": blocks.InceptionSkip3D()
+        "standard": feature_recognition_blocks.StandardSkip3D(),
+        "residual": feature_recognition_blocks.ResidualSkip3D(),
+        "dense": feature_recognition_blocks.DenseSkip3D(),
+        "inception": feature_recognition_blocks.InceptionSkip3D()
     }
 
     def __init__(self, input_shape, filter_base, num_classes, pre_processing=None, post_processing=None):
@@ -306,7 +310,7 @@ class SearchSpace3DMulticlass(kt.HyperModel):
         depth = hp.Int(name='depth', min_value=2, max_value=self.max_depth)
         num_convolutions = hp.Int(name='num_convolutions', min_value=1, max_value=3)
         downsampling = self.downsampling[
-            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution"])
+            hp.Choice(name='downsampling', values=["max_pooling", "average_pooling", "down_convolution", "hybrid"])
         ]
         upsampling = self.upsampling[
             hp.Choice(name='upsampling', values=["transposed_convolution", "up_sampling"])

@@ -25,7 +25,7 @@ import mixins
 class Block(abc.ABC):
     """Interface for blocks representing different methods of feature detection"""
     @abc.abstractmethod
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         pass
 
 
@@ -34,7 +34,7 @@ class Standard2D(Block, mixins.ConvMixin2D):
     Encapsulates a method for applying a standard block of convolution and batch normalization operations to
     2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a standard block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -52,7 +52,7 @@ class Standard3D(Block, mixins.ConvMixin3D):
     Encapsulates a method for applying a standard block of convolution and batch normalization operations to
     3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a standard block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -70,7 +70,7 @@ class Residual2D(Block, mixins.ConvMixin2D):
     Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
     2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a residual block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -92,7 +92,7 @@ class Residual3D(Block, mixins.ConvMixin3D):
     Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
     3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a residual block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -114,7 +114,7 @@ class Dense2D(Block, mixins.ConvMixin2D):
     Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
     2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
         Each standard block gets the concatenated outputs of all standard blocks before as input.
@@ -143,7 +143,7 @@ class Dense3D(Block, mixins.ConvMixin3D):
     Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
     3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
         Each standard block gets the concatenated outputs of all standard blocks before as input.
@@ -172,7 +172,7 @@ class Inception2D(Block, mixins.ConvMixin2D):
     Encapsulates a method for applying an inception block to 2-dimensional input data.
     an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates an inception block. Inside the inception block,  1x1,  3x3,  5x5 and a pooling/scaling operations are
         applied to the input data in parallel. Features of different sizes can therefore be detected at the same level
@@ -197,7 +197,7 @@ class Inception3D(Block, mixins.ConvMixin3D):
     Encapsulates a method for applying an inception block to 3-dimensional input data.
     an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
         are applied to the input data in parallel. Features of different sizes can therefore be detected at the same
@@ -222,7 +222,7 @@ class StandardSkip2D(Block, mixins.ConvMixin2D):
     Skip-connection version of the Standard2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a standard block of convolution and batch normalization operations to 2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a standard block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -242,7 +242,7 @@ class StandardSkip3D(Block, mixins.ConvMixin3D):
     Skip-connection version of the Standard3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a standard block of convolution and batch normalization operations to 3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a standard block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -263,7 +263,7 @@ class ResidualSkip2D(Block, mixins.ConvMixin2D):
     Applies a residual block of convolution, batch normalization and add operations to
     2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a residual block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -287,7 +287,7 @@ class ResidualSkip3D(Block, mixins.ConvMixin3D):
     Applies a residual block of convolution, batch normalization and add operations to
     3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a residual block containing a certain amount of convolution operations and optionally
         batch normalization by calling the apply_convolutions method of the convolution mixin class with the
@@ -310,7 +310,7 @@ class DenseSkip2D(Block, mixins.ConvMixin2D):
     Skip-connection version of the Dense2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a dense block of convolution, batch normalization and concatenation operations to 2-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
         Each standard block gets the concatenated outputs of all standard blocks before as input.
@@ -340,7 +340,7 @@ class DenseSkip3D(Block, mixins.ConvMixin3D):
     Skip-connection version of the Dense3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a dense block of convolution, batch normalization and concatenation operations to 3-dimensional input data
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates a dense block. A dense block combines a given amount of standard blocks with concatenation operations.
         Each standard block gets the concatenated outputs of all standard blocks before as input.
@@ -371,7 +371,7 @@ class InceptionSkip2D(Block, mixins.ConvMixin2D):
     Applying an inception block to 2-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
     a pooling/scaling operation in parallel to the given input data.
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
         are applied to the input data in parallel. Features of different sizes can therefore be detected at the same
@@ -398,7 +398,7 @@ class InceptionSkip3D(Block, mixins.ConvMixin3D):
     Applying an inception block to 3-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
     a pooling/scaling operation in parallel to the given input data.
     """
-    def create(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
+    def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         """
         Creates an inception block. Inside the inception block,  1x1x1,  3x3x3,  5x5x5 and a pooling/scaling operations
         are applied to the input data in parallel. Features of different sizes can therefore be detected at the same

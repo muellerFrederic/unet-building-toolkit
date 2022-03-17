@@ -1,4 +1,4 @@
-from . import blocks
+from . import feature_recognition_blocks
 from . import creators
 from . import losses
 from . import metrics
