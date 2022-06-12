@@ -32,7 +32,7 @@ class SearchSpace2DBinary(kt.HyperModel):
         "max_pooling": sub_sampling_blocks.MaxPoolingWrapper2D(),
         "average_pooling": sub_sampling_blocks.AveragePoolingWrapper2D(),
         "down_convolution": sub_sampling_blocks.DownConvolutionWrapper2D(),
-        "hybrid": sub_sampling_blocks.HybridPoolingWrapper2D()
+        "hybrid": sub_sampling_blocks.MixedPoolingWrapper2D()
     }
 
     upsampling = {
@@ -111,7 +111,7 @@ class SearchSpace3DBinary(kt.HyperModel):
         "max_pooling": sub_sampling_blocks.MaxPoolingWrapper3D(),
         "average_pooling": sub_sampling_blocks.AveragePoolingWrapper3D(),
         "down_convolution": sub_sampling_blocks.DownConvolutionWrapper3D(),
-        "hybrid": sub_sampling_blocks.HybridPoolingWrapper3D()
+        "hybrid": sub_sampling_blocks.MixedPoolingWrapper3D()
     }
 
     upsampling = {
@@ -190,7 +190,7 @@ class SearchSpace2DMulticlass(kt.HyperModel):
         "max_pooling": sub_sampling_blocks.MaxPoolingWrapper2D(),
         "average_pooling": sub_sampling_blocks.AveragePoolingWrapper2D(),
         "down_convolution": sub_sampling_blocks.DownConvolutionWrapper2D(),
-        "hybrid": sub_sampling_blocks.HybridPoolingWrapper2D()
+        "hybrid": sub_sampling_blocks.MixedPoolingWrapper2D()
     }
 
     upsampling = {
@@ -269,7 +269,7 @@ class SearchSpace3DMulticlass(kt.HyperModel):
         "max_pooling": sub_sampling_blocks.MaxPoolingWrapper3D(),
         "average_pooling": sub_sampling_blocks.AveragePoolingWrapper3D(),
         "down_convolution": sub_sampling_blocks.DownConvolutionWrapper3D(),
-        "hybrid": sub_sampling_blocks.HybridPoolingWrapper3D()
+        "hybrid": sub_sampling_blocks.MixedPoolingWrapper3D()
     }
 
     upsampling = {

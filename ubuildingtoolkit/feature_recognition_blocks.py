@@ -22,14 +22,14 @@ import abc
 import mixins
 
 
-class Block(abc.ABC):
+class FeatureRecognitionBlock(abc.ABC):
     """Interface for blocks representing different methods of feature detection"""
     @abc.abstractmethod
     def apply(self, input_data, convolutions, filters=None, batch_normalization=True, **kwargs):
         pass
 
 
-class Standard2D(Block, mixins.ConvMixin2D):
+class Standard2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Encapsulates a method for applying a standard block of convolution and batch normalization operations to
     2-dimensional input data
@@ -47,7 +47,7 @@ class Standard2D(Block, mixins.ConvMixin2D):
         return self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
 
 
-class Standard3D(Block, mixins.ConvMixin3D):
+class Standard3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Encapsulates a method for applying a standard block of convolution and batch normalization operations to
     3-dimensional input data
@@ -65,7 +65,7 @@ class Standard3D(Block, mixins.ConvMixin3D):
         return self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
 
 
-class Residual2D(Block, mixins.ConvMixin2D):
+class Residual2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
     2-dimensional input data
@@ -87,7 +87,7 @@ class Residual2D(Block, mixins.ConvMixin2D):
         return output
 
 
-class Residual3D(Block, mixins.ConvMixin3D):
+class Residual3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Encapsulates a method for applying a residual block of convolution, batch normalization and add operations to
     3-dimensional input data
@@ -109,7 +109,7 @@ class Residual3D(Block, mixins.ConvMixin3D):
         return output
 
 
-class Dense2D(Block, mixins.ConvMixin2D):
+class Dense2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
     2-dimensional input data
@@ -138,7 +138,7 @@ class Dense2D(Block, mixins.ConvMixin2D):
         return concat_arr[-1]
 
 
-class Dense3D(Block, mixins.ConvMixin3D):
+class Dense3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Encapsulates a method for applying a dense block of convolution, batch normalization and concatenation operations to
     3-dimensional input data
@@ -167,7 +167,7 @@ class Dense3D(Block, mixins.ConvMixin3D):
         return concat_arr[-1]
 
 
-class Inception2D(Block, mixins.ConvMixin2D):
+class Inception2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Encapsulates a method for applying an inception block to 2-dimensional input data.
     an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
@@ -186,13 +186,13 @@ class Inception2D(Block, mixins.ConvMixin2D):
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
         five_by_five = self.apply_convolutions(input_data, convolutions, filters, (5, 5), batch_normalization)
-        pooled = tf.keras.layers.MaxPooling2D(strides=(1, 1), padding="same")(input_data)
+        pooled = tf.keras.layers.MaxPooling2D(pool_size=(3, 3), strides=(1, 1), padding="same")(input_data)
         pooled = self.apply_convolutions(pooled, 1, filters, (1, 1), batch_normalization)
         concat = tf.keras.layers.Concatenate()([one_by_one, three_by_three, five_by_five, pooled])
         return self.apply_convolutions(concat, 1, filters, (1, 1), batch_normalization)
 
 
-class Inception3D(Block, mixins.ConvMixin3D):
+class Inception3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Encapsulates a method for applying an inception block to 3-dimensional input data.
     an inception block applies a 1x1, a 3x3, a 5x5 and a pooling/scaling operation in parallel to the given input data.
@@ -211,13 +211,13 @@ class Inception3D(Block, mixins.ConvMixin3D):
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
         five_by_five = self.apply_convolutions(input_data, convolutions, filters, (5, 5, 5), batch_normalization)
-        pooled = tf.keras.layers.MaxPooling3D(strides=(1, 1, 1), padding="same")(input_data)
+        pooled = tf.keras.layers.MaxPooling2D(pool_size=(3, 3, 3), strides=(1, 1, 1), padding="same")(input_data)
         pooled = self.apply_convolutions(pooled, 1, filters, (1, 1, 1), batch_normalization)
         concat = tf.keras.layers.Concatenate()([one_by_one, three_by_three, five_by_five, pooled])
         return self.apply_convolutions(concat, 1, filters, (1, 1, 1), batch_normalization)
 
 
-class StandardSkip2D(Block, mixins.ConvMixin2D):
+class StandardSkip2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Skip-connection version of the Standard2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a standard block of convolution and batch normalization operations to 2-dimensional input data
@@ -237,7 +237,7 @@ class StandardSkip2D(Block, mixins.ConvMixin2D):
         return output
 
 
-class StandardSkip3D(Block, mixins.ConvMixin3D):
+class StandardSkip3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Skip-connection version of the Standard3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a standard block of convolution and batch normalization operations to 3-dimensional input data
@@ -257,7 +257,7 @@ class StandardSkip3D(Block, mixins.ConvMixin3D):
         return output
 
 
-class ResidualSkip2D(Block, mixins.ConvMixin2D):
+class ResidualSkip2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Skip-connection version of the Residual2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a residual block of convolution, batch normalization and add operations to
@@ -281,7 +281,7 @@ class ResidualSkip2D(Block, mixins.ConvMixin2D):
         return output
 
 
-class ResidualSkip3D(Block, mixins.ConvMixin3D):
+class ResidualSkip3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Skip-connection version of the Residual3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a residual block of convolution, batch normalization and add operations to
@@ -305,7 +305,7 @@ class ResidualSkip3D(Block, mixins.ConvMixin3D):
         return output
 
 
-class DenseSkip2D(Block, mixins.ConvMixin2D):
+class DenseSkip2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Skip-connection version of the Dense2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a dense block of convolution, batch normalization and concatenation operations to 2-dimensional input data
@@ -335,7 +335,7 @@ class DenseSkip2D(Block, mixins.ConvMixin2D):
         return concat_arr[-1]
 
 
-class DenseSkip3D(Block, mixins.ConvMixin3D):
+class DenseSkip3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Skip-connection version of the Dense3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applies a dense block of convolution, batch normalization and concatenation operations to 3-dimensional input data
@@ -365,7 +365,7 @@ class DenseSkip3D(Block, mixins.ConvMixin3D):
         return concat_arr[-1]
 
 
-class InceptionSkip2D(Block, mixins.ConvMixin2D):
+class InceptionSkip2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
     """
     Skip-connection version of the Inception2D-block. Multiple inputs can be passed as list and will be concatenated.
     Applying an inception block to 2-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
@@ -392,7 +392,7 @@ class InceptionSkip2D(Block, mixins.ConvMixin2D):
         return self.apply_convolutions(concat, 1, filters, (1, 1), batch_normalization)
 
 
-class InceptionSkip3D(Block, mixins.ConvMixin3D):
+class InceptionSkip3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
     """
     Skip-connection version of the Inception3D-block. Multiple inputs can be passed as list and will be concatenated.
     Applying an inception block to 3-dimensional input data.An inception block applies a 1x1, a 3x3, a 5x5 and
