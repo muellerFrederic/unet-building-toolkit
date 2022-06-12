@@ -17,8 +17,8 @@ This module contains classes which encapsulate methods for creating different u-
 """
 
 import abc
-import feature_recognition_blocks
 import tensorflow as tf
+import feature_recognition_blocks
 import sub_sampling_blocks
 import mixins
 
@@ -119,16 +119,16 @@ class Unet2D(ModelCreator, mixins.AttentMixin2D):
     def _create_network_core(self, input_data, filters, depth, num_convolutions, output_feature_maps, downsampling,
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         if downsampling is None:
-            downsampling = wrappers.MaxPoolingWrapper2D()
+            downsampling = sub_sampling_blocks.MaxPoolingWrapper2D()
 
         if upsampling is None:
-            upsampling = wrappers.TransposedConvolutionWrapper2D()
+            upsampling = sub_sampling_blocks.TransposedConvolutionWrapper2D()
 
         if block_contracting is None:
-            block_contracting = blocks.Standard2D()
+            block_contracting = feature_recognition_blocks.Standard2D()
 
         if block_expanding is None:
-            block_expanding = blocks.StandardSkip2D()
+            block_expanding = feature_recognition_blocks.StandardSkip2D()
 
         for count, num_filters in enumerate(filters):
             if count == 0:
@@ -165,16 +165,16 @@ class Unet3D(ModelCreator):
     def _create_network_core(self, input_data, filters, depth, num_convolutions, output_feature_maps, downsampling,
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         if downsampling is None:
-            downsampling = wrappers.MaxPoolingWrapper3D()
+            downsampling = sub_sampling_blocks.MaxPoolingWrapper3D()
 
         if upsampling is None:
-            upsampling = wrappers.TransposedConvolutionWrapper3D()
+            upsampling = sub_sampling_blocks.TransposedConvolutionWrapper3D()
 
         if block_contracting is None:
-            block_contracting = blocks.Standard3D()
+            block_contracting = feature_recognition_blocks.Standard3D()
 
         if block_expanding is None:
-            block_expanding = blocks.StandardSkip3D()
+            block_expanding = feature_recognition_blocks.StandardSkip3D()
 
         for count, num_filters in enumerate(filters):
             if count == 0:
@@ -207,16 +207,16 @@ class Vnet2D(ModelCreator):
     def _create_network_core(self, input_data, filters, depth, num_convolutions, output_feature_maps, downsampling,
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         if downsampling is None:
-            downsampling = wrappers.DownConvolutionWrapper2D()
+            downsampling = sub_sampling_blocks.DownConvolutionWrapper2D()
 
         if upsampling is None:
-            upsampling = wrappers.TransposedConvolutionWrapper2D()
+            upsampling = sub_sampling_blocks.TransposedConvolutionWrapper2D()
 
         if block_contracting is None:
-            block_contracting = blocks.Residual2D()
+            block_contracting = feature_recognition_blocks.Residual2D()
 
         if block_expanding is None:
-            block_expanding = blocks.ResidualSkip2D()
+            block_expanding = feature_recognition_blocks.ResidualSkip2D()
 
         for count, num_filters in enumerate(filters):
             if count == 0:
@@ -249,16 +249,16 @@ class Vnet3D(ModelCreator):
     def _create_network_core(self, input_data, filters, depth, num_convolutions, output_feature_maps, downsampling,
                              upsampling, block_contracting, block_expanding, batch_normalization, **kwargs):
         if downsampling is None:
-            downsampling = wrappers.DownConvolutionWrapper3D()
+            downsampling = sub_sampling_blocks.DownConvolutionWrapper3D()
 
         if upsampling is None:
-            upsampling = wrappers.TransposedConvolutionWrapper3D()
+            upsampling = sub_sampling_blocks.TransposedConvolutionWrapper3D()
 
         if block_contracting is None:
-            block_contracting = blocks.Residual3D()
+            block_contracting = feature_recognition_blocks.Residual3D()
 
         if block_expanding is None:
-            block_expanding = blocks.ResidualSkip3D()
+            block_expanding = feature_recognition_blocks.ResidualSkip3D()
 
         for count, num_filters in enumerate(filters):
             if count == 0:

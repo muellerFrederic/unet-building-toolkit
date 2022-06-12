@@ -72,28 +72,28 @@ class SubSamplingBlock3D(abc.ABC):
 
 class TransposedConvolutionWrapper3D(SubSamplingBlock3D):
     def apply(self, input_data, filters=None, kernel_size=(2, 2, 2), strides=(2, 2, 2)):
-        return tf.keras.layers.Convolution2DTranspose(filters=filters, kernel_size=kernel_size,
+        return tf.keras.layers.Convolution3DTranspose(filters=filters, kernel_size=kernel_size,
                                                       strides=strides)(input_data)
 
 
 class UpSamplingWrapper3D(SubSamplingBlock3D):
     def apply(self, input_data, filters=None, kernel_size=(2, 2, 2), strides=(2, 2, 2)):
-        return tf.keras.layers.UpSampling2D(size=kernel_size)(input_data)
+        return tf.keras.layers.UpSampling3D(size=kernel_size)(input_data)
 
 
 class MaxPoolingWrapper3D(SubSamplingBlock3D):
     def apply(self, input_data, filters=None, kernel_size=(2, 2, 2), strides=(2, 2, 2)):
-        return tf.keras.layers.MaxPooling2D(pool_size=kernel_size, strides=strides)(input_data)
+        return tf.keras.layers.MaxPooling3D(pool_size=kernel_size, strides=strides)(input_data)
 
 
 class AveragePoolingWrapper3D(SubSamplingBlock3D):
     def apply(self, input_data, filters=None, kernel_size=(2, 2, 2), strides=(2, 2, 2)):
-        return tf.keras.layers.AveragePooling2D(pool_size=kernel_size, strides=strides)(input_data)
+        return tf.keras.layers.AveragePooling3D(pool_size=kernel_size, strides=strides)(input_data)
 
 
 class DownConvolutionWrapper3D(SubSamplingBlock3D):
     def apply(self, input_data, filters=None, kernel_size=(2, 2, 2), strides=(2, 2, 2)):
-        return tf.keras.layers.Convolution2D(filters=filters, kernel_size=kernel_size, strides=strides)(input_data)
+        return tf.keras.layers.Convolution3D(filters=filters, kernel_size=kernel_size, strides=strides)(input_data)
 
 
 class MixedPoolingWrapper3D(SubSamplingBlock2D):
