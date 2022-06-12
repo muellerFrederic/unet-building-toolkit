@@ -191,10 +191,10 @@ class Unet3D(ModelCreator):
                                                           num_filters, **kwargs)
 
         if output_feature_maps == 1:
-            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
+            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1, 1),
                                                            padding='same', activation='sigmoid')(input_data[-1])
         else:
-            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
+            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1, 1),
                                                            padding='same', activation='softmax')(input_data[-1])
         return input_data
 
@@ -275,10 +275,10 @@ class Vnet3D(ModelCreator):
                                                           num_filters, **kwargs)
 
         if output_feature_maps == 1:
-            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
+            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1, 1),
                                                            padding='same', activation='sigmoid')(input_data[-1])
         else:
-            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1),
+            input_data[-1] = tf.keras.layers.Convolution3D(filters=output_feature_maps, kernel_size=(1, 1, 1),
                                                            padding='same', activation='softmax')(input_data[-1])
         return input_data
 
