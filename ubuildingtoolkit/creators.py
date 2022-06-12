@@ -18,9 +18,9 @@ This module contains classes which encapsulate methods for creating different u-
 
 import abc
 import tensorflow as tf
-import feature_recognition_blocks
-import sub_sampling_blocks
-import mixins
+from . import feature_recognition_blocks
+from . import sub_sampling_blocks
+from . import mixins
 
 
 class ModelCreator(abc.ABC):

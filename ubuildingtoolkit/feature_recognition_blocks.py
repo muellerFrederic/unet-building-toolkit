@@ -19,7 +19,7 @@ Since the interface is given as abstract class, all the blocks are interchangeab
 
 import tensorflow as tf
 import abc
-import mixins
+from . import mixins
 
 
 class FeatureRecognitionBlock(abc.ABC):

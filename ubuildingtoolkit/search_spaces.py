@@ -20,11 +20,11 @@ This module contains kerastuner search spaces for u-net-architectures suited for
 import math
 import kerastuner as kt
 import tensorflow as tf
-import creators
-import losses
-import feature_recognition_blocks
-import sub_sampling_blocks
-import metrics
+from . import creators
+from . import losses
+from . import feature_recognition_blocks
+from . import sub_sampling_blocks
+from . import metrics
 
 
 class SearchSpace2DBinary(kt.HyperModel):
