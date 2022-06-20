@@ -211,7 +211,7 @@ class Inception3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
         one_by_one = self.apply_convolutions(input_data, convolutions, filters, (1, 1, 1), batch_normalization)
         three_by_three = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
         five_by_five = self.apply_convolutions(input_data, convolutions, filters, (5, 5, 5), batch_normalization)
-        pooled = tf.keras.layers.MaxPooling2D(pool_size=(3, 3, 3), strides=(1, 1, 1), padding="same")(input_data)
+        pooled = tf.keras.layers.MaxPooling3D(pool_size=(3, 3, 3), strides=(1, 1, 1), padding="same")(input_data)
         pooled = self.apply_convolutions(pooled, 1, filters, (1, 1, 1), batch_normalization)
         concat = tf.keras.layers.Concatenate()([one_by_one, three_by_three, five_by_five, pooled])
         return self.apply_convolutions(concat, 1, filters, (1, 1, 1), batch_normalization)
