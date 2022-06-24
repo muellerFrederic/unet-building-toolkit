@@ -41,7 +41,7 @@ class ConvMixin2D(ConvolutionMixin):
         """
         for x in range(convolutions):
             input_data = tf.keras.layers.Convolution2D(filters=filters, kernel_size=kernel_size, padding='same',
-                                                       activation='relu')(input_data)
+                                                       activation='elu', kernel_initializer='he_normal')(input_data)
             if batch_normalization:
                 input_data = tf.keras.layers.BatchNormalization()(input_data)
         return input_data
@@ -60,7 +60,7 @@ class ConvMixin3D(ConvolutionMixin):
         """
         for x in range(convolutions):
             input_data = tf.keras.layers.Convolution3D(filters=filters, kernel_size=kernel_size, padding='same',
-                                                       activation='relu')(input_data)
+                                                       activation='elu', kernel_initializer='he_normal')(input_data)
             if batch_normalization:
                 input_data = tf.keras.layers.BatchNormalization()(input_data)
         return input_data
