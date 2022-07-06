@@ -130,7 +130,7 @@ class Dense2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
         else:
             concat_arr = [0] * 5
-        concat_arr[0] = self.apply_convolutions(input_data, convolutions, filters, (3, 3), batch_normalization)
+        concat_arr[0] = input_data
         concat_arr[1] = self.apply_convolutions(concat_arr[0], convolutions, filters, (3, 3), batch_normalization)
         for x in range(2, len(concat_arr)):
             concat_arr[x] = tf.keras.layers.Concatenate()(concat_arr[:x])
@@ -159,7 +159,7 @@ class Dense3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
         else:
             concat_arr = [0] * 5
-        concat_arr[0] = self.apply_convolutions(input_data, convolutions, filters, (3, 3, 3), batch_normalization)
+        concat_arr[0] = input_data
         concat_arr[1] = self.apply_convolutions(concat_arr[0], convolutions, filters, (3, 3, 3), batch_normalization)
         for x in range(2, len(concat_arr)):
             concat_arr[x] = tf.keras.layers.Concatenate()(concat_arr[:x])
