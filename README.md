@@ -8,7 +8,8 @@ U-Nets are pretty cool and useful networks used for semantic segmentaion. They a
 
 :warning:  
 Note that this package has been tested manually to the best of my knowledge, but there are no automated tests.
-Keep that in mind and use the package with care and think before you act.
+Keep that in mind and use the package with care and think before you act.  
+:warning:  
 ## Requirements & installation
 Basically all you need to get started with ubuildingtoolkit is some version of Python above 3.8.  
 You don't even need to install a specific version of tensorflow, since it is listed as dependency in the configuration files of this package.  
@@ -74,7 +75,7 @@ model = model_creator.create(input_shape=(128, 128, 1),
                              downsampling=ubtk.sub_sampling_blocks.AveragePoolingWrapper2D())
 ```
 Note that the dimensions of the operation need to fit the dimensions of the input data (Don't use 2d MaxPooling with 3d input data).  
-The wrapper classes are needed to unify the interface of the operations and mke them interchangeable.  
+The wrapper classes are needed to unify the interface of the operations and make them interchangeable.  
 For example, the interface of the 2d MaxPooling operation looks like this: 
 ```python
 tf.keras.layers.MaxPooling2D(pool_size=kernel_size, strides=strides)(input_data)
