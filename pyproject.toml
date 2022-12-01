@@ -9,7 +9,6 @@ name = "ubuildingtoolkit"
 version = "0.0.1"
 authors = [{ name = "Frederic Mueller", email = "fredericmueller@gmx.net" }]
 description = "Implements different classes for building unet-like neural network structures"
-license = "Apache-2.0"
 readme = "README.md"
 classifiers =[
     "Programming Language :: Python :: 3",
