@@ -4,3 +4,18 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+[project]
+name = "ubuildingtoolkit"
+version = "0.0.1"
+authors = [{ name = "Frederic Mueller", email = "fredericmueller@gmx.net" }]
+description = "Implements different classes for building unet-like neural network structures"
+license = "Apache-2.0"
+readme = "README.md"
+classifiers =[
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+requires-python = ">=3.8"
+dependencies = [
+    'tensorflow>=2.4'
+]
