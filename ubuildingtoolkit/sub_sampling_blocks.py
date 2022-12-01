@@ -17,8 +17,8 @@ This module contains wrapper-classes for applying standard up- or downsampling o
 This is needed to adjust the interfaces of the underlying classes anD make them interchangeable.
 """
 
-import tensorflow as tf
 import abc
+import tensorflow as tf
 
 
 class SubSamplingBlock2D(abc.ABC):

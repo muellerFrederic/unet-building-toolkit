@@ -17,8 +17,8 @@ This module encapsulates mixins for different functionalities like applying a ce
 to a given input or creating attention gates based on given inputs.
 """
 
-import tensorflow as tf
 import abc
+import tensorflow as tf
 
 
 class ConvolutionMixin(abc.ABC):

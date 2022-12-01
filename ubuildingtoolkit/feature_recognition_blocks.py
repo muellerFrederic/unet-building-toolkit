@@ -17,8 +17,8 @@ This module contains building blocks of u-net-like architectures representing di
 Since the interface is given as abstract class, all the blocks are interchangeable.
 """
 
-import tensorflow as tf
 import abc
+import tensorflow as tf
 from . import mixins
 
 
@@ -124,7 +124,7 @@ class Dense2D(FeatureRecognitionBlock, mixins.ConvMixin2D):
         :param filters: the amount of feature maps that should be created by each convolution
         :param batch_normalization: wether to use batch_normalization after each convolution operation or not
         :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
-        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        dense block. growth_rate=4 will lead to 4 standard blocks inside the dense block.
         """
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
@@ -153,7 +153,7 @@ class Dense3D(FeatureRecognitionBlock, mixins.ConvMixin3D):
         :param filters: the amount of feature maps that should be created by each convolution
         :param batch_normalization: wether to use batch_normalization after each convolution operation or not
         :param kwargs: pass the keyword argument growth_rate to determine the amount of standard blocks contained in the
-        dense block. growth_rate=4 will lead to 5 standard blocks inside the dense block.
+        dense block. growth_rate=4 will lead to 4 standard blocks inside the dense block.
         """
         if 'growth_rate' in kwargs.keys():
             concat_arr = [0] * (kwargs['growth_rate'] + 1)
