@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ubuildingtoolkit"
 version = "0.0.1"
-authors = [{ name = "Frederic Mueller", email = "fredericmueller@gmx.net" }]
+authors = [{ name = "Frederic Mueller" }]
 description = "Implements different classes for building unet-like neural network structures"
 readme = "README.md"
 classifiers =[

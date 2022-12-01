@@ -142,8 +142,6 @@ class Unet2D(ModelCreator, mixins.AttentMixin2D):
                 index_concatenate = 2 * depth - count - 2
                 skip_connection = input_data[index_concatenate]
                 lower_stage = input_data[count - 1]
-                if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
-                    skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
                 upsampled = upsampling.apply(lower_stage, filters=num_filters)
                 input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,
                                                           num_filters, **kwargs)
@@ -303,7 +301,7 @@ class GeneralUnet2D(ModelCreator, mixins.AttentMixin2D):
                 index_concatenate = 2 * depth - count - 2
                 skip_connection = input_data[index_concatenate]
                 lower_stage = input_data[count - 1]
-                if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
+                if 'attention_gates' in kwargs.keys() and kwargs['attention_gates']:
                     skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
                 upsampled = upsampling.apply(lower_stage, filters=num_filters)
                 input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,
@@ -338,7 +336,7 @@ class GeneralUnet3D(ModelCreator, mixins.AttentMixin3D):
                 index_concatenate = 2 * depth - count - 2
                 skip_connection = input_data[index_concatenate]
                 lower_stage = input_data[count - 1]
-                if 'attention_gate' in kwargs.keys() and kwargs['attention_gate']:
+                if 'attention_gates' in kwargs.keys() and kwargs['attention_gates']:
                     skip_connection = self.add_attention_gate(skip_connection, lower_stage, num_filters)
                 upsampled = upsampling.apply(lower_stage, filters=num_filters)
                 input_data[count] = block_expanding.apply([skip_connection, upsampled], num_convolutions,

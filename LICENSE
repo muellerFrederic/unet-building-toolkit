@@ -201,9 +201,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-########################################################################################################################
-This package makes use of tensorflow 2.4.1, which is available under "Apache-2.0" license.
+                            !Important Notice!
+This package makes use of tensorflow, which is available under "Apache-2.0" license.
 For details, see https://github.com/tensorflow/tensorflow/blob/master/LICENSE
-
-This package makes use of keras-tuner 1.0.2, which is available under "Apache-2.0" license.
-For details, see https://github.com/keras-team/keras-tuner/blob/master/LICENSE
